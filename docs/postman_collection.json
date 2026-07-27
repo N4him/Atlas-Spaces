@@ -1,0 +1,212 @@
+{
+  "info": {
+    "name": "Atlas Spaces API",
+    "description": "Colección Postman para la API REST de Atlas Spaces (prueba técnica Full Stack).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:4000/api" },
+    { "key": "token", "value": "" },
+    { "key": "spaceId", "value": "" },
+    { "key": "reservationId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login (admin)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@atlasspaces.com\",\n  \"password\": \"Atlas2026!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (operator)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": "{{baseUrl}}/auth/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"operador@atlasspaces.com\",\n  \"password\": \"Atlas2026!\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Me",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/auth/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": { "method": "GET", "url": "{{baseUrl}}/health" }
+        }
+      ]
+    },
+    {
+      "name": "Spaces",
+      "item": [
+        {
+          "name": "Listar espacios",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/spaces"
+          }
+        },
+        {
+          "name": "Crear espacio (admin)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/spaces",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sala Ejemplo\",\n  \"type\": \"sala_reunion\",\n  \"location\": \"Sede Chapinero\",\n  \"capacity\": 6,\n  \"openTime\": \"08:00\",\n  \"closeTime\": \"18:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar espacio (admin)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/spaces/{{spaceId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"capacity\": 8\n}" }
+          }
+        },
+        {
+          "name": "Desactivar espacio (admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/spaces/{{spaceId}}/deactivate"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Listar reservas (con filtros)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/reservations?page=1&limit=10&sortBy=startAt&sortOrder=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["reservations"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "sortBy", "value": "startAt" },
+                { "key": "sortOrder", "value": "desc" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Crear reserva",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/reservations",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"spaceId\": \"{{spaceId}}\",\n  \"title\": \"Reunión de prueba\",\n  \"clientName\": \"Cliente Postman\",\n  \"clientEmail\": \"cliente@ejemplo.com\",\n  \"attendeesCount\": 3,\n  \"startAt\": \"2026-08-15T09:00\",\n  \"endAt\": \"2026-08-15T10:00\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Editar reserva",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": "{{baseUrl}}/reservations/{{reservationId}}",
+            "body": { "mode": "raw", "raw": "{\n  \"notes\": \"Actualizado desde Postman\"\n}" }
+          }
+        },
+        {
+          "name": "Cancelar reserva",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/reservations/{{reservationId}}/cancel"
+          }
+        },
+        {
+          "name": "Exportar CSV",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/reservations/export?status=confirmed"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Analytics",
+      "item": [
+        {
+          "name": "Resumen",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/analytics/summary?from=2026-07-01&to=2026-08-15"
+          }
+        },
+        {
+          "name": "Reservas por día",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/analytics/reservations-by-day?from=2026-07-01&to=2026-08-15"
+          }
+        },
+        {
+          "name": "Distribución por estado",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/analytics/status-distribution?from=2026-07-01&to=2026-08-15"
+          }
+        },
+        {
+          "name": "Uso por espacio",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": "{{baseUrl}}/analytics/space-usage?from=2026-07-01&to=2026-08-15"
+          }
+        }
+      ]
+    }
+  ]
+}
