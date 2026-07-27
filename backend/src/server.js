@@ -1,21 +1,19 @@
-const createApp = require('./app');
+require('dotenv').config();
 const connectDB = require('./config/db');
+const createApp = require('./app');
 
 const PORT = process.env.PORT || 4000;
 
-async function startServer() {
-  try {
-    await connectDB();
+async function start() {
+  await connectDB();
+  const app = createApp();
 
-    const app = createApp();
-
-    app.listen(PORT, () => {
-      console.log(`Servidor escuchando en el puerto ${PORT}`);
-    });
-  } catch (error) {
-    console.error('No fue posible iniciar el servidor:', error);
-    process.exit(1);
-  }
+  app.listen(PORT, () => {
+    console.log(`[server] Atlas Spaces API escuchando en el puerto ${PORT}`);
+  });
 }
 
-startServer();
+start().catch((err) => {
+  console.error('[server] Error fatal al iniciar el servidor:', err);
+  process.exit(1);
+});
