@@ -2,6 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 
+const authRoutes = require('./routes/authRoutes');
+const healthRoutes = require('./routes/healthRoutes');
+const { errorHandler, notFoundHandler } = require('./middleware/errorHandler');
+
 function createApp() {
   const app = express();
 
@@ -11,6 +15,12 @@ function createApp() {
   if (process.env.NODE_ENV !== 'test') {
     app.use(morgan('dev'));
   }
+
+  app.use('/api', healthRoutes);
+  app.use('/api/auth', authRoutes);
+
+  app.use(notFoundHandler);
+  app.use(errorHandler);
 
   return app;
 }
