@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { isoToDatetimeLocalInput } from '../utils/dateUtils';
+import { useModalA11y } from '../hooks/useModalA11y';
 
 const emptyForm = {
   spaceId: '',
@@ -23,6 +24,9 @@ export default function ReservationFormModal({
 }) {
   const [form, setForm] = useState(emptyForm);
   const [localErrors, setLocalErrors] = useState([]);
+  const titleId = 'reservation-form-title';
+  const errorsId = 'reservation-form-errors';
+  const dialogRef = useModalA11y({ open, onClose });
 
   useEffect(() => {
     if (open) {
@@ -75,17 +79,28 @@ export default function ReservationFormModal({
     onSubmit({ ...form, attendeesCount: Number(form.attendeesCount) });
   }
 
+  const hasErrors = localErrors.length > 0 || serverError;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-ink/40 px-4 py-8">
-      <div className="w-full max-w-lg rounded-md2 bg-white p-6 shadow-card">
-        <h3 className="font-display text-lg font-semibold text-ink">
+      <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="w-full max-w-lg rounded-md2 bg-white p-6 shadow-card"
+      >
+        <h3 id={titleId} className="font-display text-lg font-semibold text-ink">
           {initialData ? 'Editar reserva' : 'Nueva reserva'}
         </h3>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+        <form onSubmit={handleSubmit} className="mt-4 space-y-4" noValidate aria-describedby={hasErrors ? errorsId : undefined}>
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Espacio</label>
+            <label htmlFor="reservation-space" className="mb-1 block text-sm font-medium text-ink">
+              Espacio
+            </label>
             <select
+              id="reservation-space"
               value={form.spaceId}
               onChange={(e) => update('spaceId', e.target.value)}
               className="focus-ring w-full rounded-md2 border border-border px-3 py-2 text-sm"
@@ -102,8 +117,11 @@ export default function ReservationFormModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Título / motivo</label>
+            <label htmlFor="reservation-title" className="mb-1 block text-sm font-medium text-ink">
+              Título / motivo
+            </label>
             <input
+              id="reservation-title"
               value={form.title}
               onChange={(e) => update('title', e.target.value)}
               className="focus-ring w-full rounded-md2 border border-border px-3 py-2 text-sm"
@@ -113,16 +131,22 @@ export default function ReservationFormModal({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Nombre del cliente</label>
+              <label htmlFor="reservation-client-name" className="mb-1 block text-sm font-medium text-ink">
+                Nombre del cliente
+              </label>
               <input
+                id="reservation-client-name"
                 value={form.clientName}
                 onChange={(e) => update('clientName', e.target.value)}
                 className="focus-ring w-full rounded-md2 border border-border px-3 py-2 text-sm"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Correo del cliente</label>
+              <label htmlFor="reservation-client-email" className="mb-1 block text-sm font-medium text-ink">
+                Correo del cliente
+              </label>
               <input
+                id="reservation-client-email"
                 type="email"
                 value={form.clientEmail}
                 onChange={(e) => update('clientEmail', e.target.value)}
@@ -133,8 +157,11 @@ export default function ReservationFormModal({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Asistentes</label>
+              <label htmlFor="reservation-attendees" className="mb-1 block text-sm font-medium text-ink">
+                Asistentes
+              </label>
               <input
+                id="reservation-attendees"
                 type="number"
                 min="1"
                 value={form.attendeesCount}
@@ -143,8 +170,11 @@ export default function ReservationFormModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Inicio</label>
+              <label htmlFor="reservation-start" className="mb-1 block text-sm font-medium text-ink">
+                Inicio
+              </label>
               <input
+                id="reservation-start"
                 type="datetime-local"
                 value={form.startAt}
                 onChange={(e) => update('startAt', e.target.value)}
@@ -152,8 +182,11 @@ export default function ReservationFormModal({
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm font-medium text-ink">Fin</label>
+              <label htmlFor="reservation-end" className="mb-1 block text-sm font-medium text-ink">
+                Fin
+              </label>
               <input
+                id="reservation-end"
                 type="datetime-local"
                 value={form.endAt}
                 onChange={(e) => update('endAt', e.target.value)}
@@ -163,8 +196,11 @@ export default function ReservationFormModal({
           </div>
 
           <div>
-            <label className="mb-1 block text-sm font-medium text-ink">Notas (opcional)</label>
+            <label htmlFor="reservation-notes" className="mb-1 block text-sm font-medium text-ink">
+              Notas (opcional)
+            </label>
             <textarea
+              id="reservation-notes"
               value={form.notes}
               onChange={(e) => update('notes', e.target.value)}
               rows={2}
@@ -173,8 +209,8 @@ export default function ReservationFormModal({
             />
           </div>
 
-          {(localErrors.length > 0 || serverError) && (
-            <div className="rounded-md2 bg-danger-50 px-3 py-2 text-sm text-danger-600">
+          {hasErrors && (
+            <div id={errorsId} role="alert" className="rounded-md2 bg-danger-50 px-3 py-2 text-sm text-danger-600">
               <ul className="list-inside list-disc">
                 {localErrors.map((e) => (
                   <li key={e}>{e}</li>
@@ -195,6 +231,7 @@ export default function ReservationFormModal({
             <button
               type="submit"
               disabled={submitting}
+              aria-busy={submitting}
               className="focus-ring rounded-md2 bg-brand-500 px-4 py-2 text-sm font-medium text-white hover:bg-brand-600 disabled:opacity-60"
             >
               {submitting ? 'Guardando…' : 'Guardar'}
