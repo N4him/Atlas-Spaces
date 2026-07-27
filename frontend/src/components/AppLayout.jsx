@@ -13,6 +13,13 @@ export default function AppLayout() {
 
   return (
     <div className="flex min-h-screen">
+      <a
+        href="#main-content"
+        className="focus-ring sr-only rounded-md2 bg-brand-500 px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
+      >
+        Saltar al contenido principal
+      </a>
+
       <aside className="flex w-60 shrink-0 flex-col border-r border-border bg-white">
         <div className="px-5 py-6">
           <p className="font-display text-lg font-bold tracking-tight text-ink">Atlas Spaces</p>
@@ -20,7 +27,7 @@ export default function AppLayout() {
         </div>
         <div className="hour-ruler mx-5" aria-hidden="true" />
 
-        <nav className="flex-1 px-3 py-6">
+        <nav aria-label="Navegación principal" className="flex-1 px-3 py-6">
           <ul className="space-y-1">
             {NAV_ITEMS.map((item) => (
               <li key={item.to}>
@@ -54,7 +61,7 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      <main className="flex-1 bg-surface">
+      <main id="main-content" className="flex-1 bg-surface">
         <div className="mx-auto max-w-6xl px-8 py-8">
           <Outlet />
         </div>

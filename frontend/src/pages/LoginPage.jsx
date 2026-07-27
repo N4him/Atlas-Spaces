@@ -71,7 +71,9 @@ export default function LoginPage() {
           </div>
 
           {error && (
-            <p className="mt-4 rounded-md2 bg-danger-50 px-3 py-2 text-sm text-danger-600">{error}</p>
+            <p role="alert" className="mt-4 rounded-md2 bg-danger-50 px-3 py-2 text-sm text-danger-600">
+              {error}
+            </p>
           )}
 
           <button
