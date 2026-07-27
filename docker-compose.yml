@@ -25,7 +25,10 @@ services:
       # Dentro de la red de Docker Compose, "mongo" resuelve al contenedor del servicio anterior.
       MONGO_URI: mongodb://mongo:27017/atlas_spaces
       JWT_SECRET: ${JWT_SECRET:-cambia-este-valor-por-un-secreto-largo-y-aleatorio}
-      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-8h}
+      ACCESS_TOKEN_EXPIRES_IN: ${ACCESS_TOKEN_EXPIRES_IN:-15m}
+      REFRESH_TOKEN_EXPIRES_IN_DAYS: ${REFRESH_TOKEN_EXPIRES_IN_DAYS:-7}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
       NODE_ENV: production
     depends_on:
       mongo:
