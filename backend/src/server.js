@@ -1,6 +1,7 @@
 require('dotenv').config();
 const connectDB = require('./config/db');
 const createApp = require('./app');
+const logger = require('./utils/logger');
 
 const PORT = process.env.PORT || 4000;
 
@@ -9,11 +10,11 @@ async function start() {
   const app = createApp();
 
   app.listen(PORT, () => {
-    console.log(`[server] Atlas Spaces API escuchando en el puerto ${PORT}`);
+    logger.info({ port: PORT }, 'Atlas Spaces API escuchando');
   });
 }
 
 start().catch((err) => {
-  console.error('[server] Error fatal al iniciar el servidor:', err);
+  logger.error({ err }, 'Error fatal al iniciar el servidor');
   process.exit(1);
 });

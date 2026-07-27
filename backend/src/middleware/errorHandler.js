@@ -1,4 +1,5 @@
 const { BusinessRuleError } = require('../utils/reservationRules');
+const logger = require('../utils/logger');
 
 /**
  * Middleware de manejo de errores centralizado.
@@ -29,7 +30,9 @@ function errorHandler(err, req, res, next) {
     return res.status(409).json({ message: `Ya existe un registro con ese ${field}` });
   }
 
-  console.error('[error]', err);
+  // Error no anticipado: se registra completo (stack incluido) para depuración, pero
+  // nunca se expone al cliente para no filtrar detalles internos del servidor.
+  logger.error({ err, reqId: req.id, path: req.originalUrl }, 'Error no controlado');
   return res.status(500).json({ message: 'Error interno del servidor' });
 }
 

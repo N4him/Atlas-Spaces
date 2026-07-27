@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const logger = require('../utils/logger');
 
 /**
  * Establece la conexión con MongoDB usando la URI definida en variables de entorno.
@@ -15,10 +16,10 @@ async function connectDB() {
 
   await mongoose.connect(uri);
 
-  console.log(`[db] Conectado a MongoDB: ${mongoose.connection.name}`);
+  logger.info({ database: mongoose.connection.name }, 'Conectado a MongoDB');
 
   mongoose.connection.on('error', (err) => {
-    console.error('[db] Error de conexión MongoDB:', err.message);
+    logger.error({ err }, 'Error de conexión a MongoDB');
   });
 
   return mongoose.connection;
