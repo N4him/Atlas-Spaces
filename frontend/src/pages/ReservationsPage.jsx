@@ -153,7 +153,7 @@ export default function ReservationsPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-ink">Reservas</h1>
           <p className="text-sm text-ink-soft">Crea, consulta y gestiona las reservas de los espacios.</p>
@@ -162,13 +162,13 @@ export default function ReservationsPage() {
           <button
             onClick={handleExport}
             disabled={exporting}
-            className="focus-ring rounded-md2 border border-border bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-surface-sunken disabled:opacity-60"
+            className="focus-ring flex-1 rounded-md2 border border-border bg-white px-4 py-2 text-sm font-semibold text-ink hover:bg-surface-sunken disabled:opacity-60 sm:flex-none"
           >
             {exporting ? 'Exportando…' : 'Exportar CSV'}
           </button>
           <button
             onClick={openCreate}
-            className="focus-ring rounded-md2 bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600"
+            className="focus-ring flex-1 rounded-md2 bg-brand-500 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-600 sm:flex-none"
           >
             + Nueva reserva
           </button>
@@ -176,8 +176,8 @@ export default function ReservationsPage() {
       </div>
 
       {/* Barra de filtros */}
-      <div className="mb-4 flex flex-wrap items-end gap-3 rounded-md2 border border-border bg-white p-4 shadow-card">
-        <div className="min-w-[200px] flex-1">
+      <div className="mb-4 grid grid-cols-2 gap-3 rounded-md2 border border-border bg-white p-4 shadow-card sm:flex sm:flex-wrap sm:items-end">
+        <div className="col-span-2 sm:min-w-[200px] sm:flex-1">
           <label className="mb-1 block text-xs font-medium text-ink-soft">Buscar</label>
           <input
             value={searchInput}
@@ -191,7 +191,7 @@ export default function ReservationsPage() {
           <select
             value={filters.status}
             onChange={(e) => updateFilter('status', e.target.value)}
-            className="focus-ring rounded-md2 border border-border px-3 py-1.5 text-sm"
+            className="focus-ring w-full rounded-md2 border border-border px-3 py-1.5 text-sm"
           >
             {STATUS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
@@ -205,7 +205,7 @@ export default function ReservationsPage() {
           <select
             value={filters.spaceId}
             onChange={(e) => updateFilter('spaceId', e.target.value)}
-            className="focus-ring rounded-md2 border border-border px-3 py-1.5 text-sm"
+            className="focus-ring w-full rounded-md2 border border-border px-3 py-1.5 text-sm"
           >
             <option value="">Todos los espacios</option>
             {spaces.map((s) => (
@@ -221,7 +221,7 @@ export default function ReservationsPage() {
             type="date"
             value={filters.from}
             onChange={(e) => updateFilter('from', e.target.value)}
-            className="focus-ring rounded-md2 border border-border px-3 py-1.5 text-sm"
+            className="focus-ring w-full rounded-md2 border border-border px-3 py-1.5 text-sm"
           />
         </div>
         <div>
@@ -230,12 +230,12 @@ export default function ReservationsPage() {
             type="date"
             value={filters.to}
             onChange={(e) => updateFilter('to', e.target.value)}
-            className="focus-ring rounded-md2 border border-border px-3 py-1.5 text-sm"
+            className="focus-ring w-full rounded-md2 border border-border px-3 py-1.5 text-sm"
           />
         </div>
         <button
           onClick={resetFilters}
-          className="focus-ring rounded-md2 px-3 py-1.5 text-sm font-medium text-brand-600 hover:underline"
+          className="focus-ring col-span-2 rounded-md2 px-3 py-1.5 text-sm font-medium text-brand-600 hover:underline sm:col-span-1"
         >
           Limpiar filtros
         </button>
@@ -253,7 +253,10 @@ export default function ReservationsPage() {
 
       {loadState === 'ready' && data.items.length > 0 && (
         <div className="overflow-hidden rounded-md2 border border-border bg-white shadow-card">
-          <table className="w-full text-left text-sm">
+          {/* overflow-x-auto: en pantallas angostas, la tabla se desliza horizontalmente
+              en vez de comprimir 7 columnas hasta hacerlas ilegibles o desbordar la página. */}
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[820px] text-left text-sm">
             <thead className="bg-surface-sunken text-xs uppercase tracking-wide text-ink-soft">
               <tr>
                 <th className="px-4 py-3 font-medium">Título</th>
@@ -310,7 +313,8 @@ export default function ReservationsPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
 
           <Pagination
             page={data.page || page}

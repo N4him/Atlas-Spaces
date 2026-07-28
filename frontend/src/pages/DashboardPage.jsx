@@ -71,23 +71,23 @@ export default function DashboardPage() {
           <h1 className="font-display text-2xl font-bold text-ink">Dashboard</h1>
           <p className="text-sm text-ink-soft">Indicadores de reservas y uso de espacios.</p>
         </div>
-        <div className="flex items-end gap-3 rounded-md2 border border-border bg-white p-3 shadow-card">
-          <div>
+        <div className="flex flex-wrap items-end gap-3 rounded-md2 border border-border bg-white p-3 shadow-card">
+          <div className="min-w-[140px] flex-1">
             <label className="mb-1 block text-xs font-medium text-ink-soft">Desde</label>
             <input
               type="date"
               value={range.from}
               onChange={(e) => setRange((r) => ({ ...r, from: e.target.value }))}
-              className="focus-ring rounded-md2 border border-border px-3 py-1.5 text-sm"
+              className="focus-ring w-full rounded-md2 border border-border px-3 py-1.5 text-sm"
             />
           </div>
-          <div>
+          <div className="min-w-[140px] flex-1">
             <label className="mb-1 block text-xs font-medium text-ink-soft">Hasta</label>
             <input
               type="date"
               value={range.to}
               onChange={(e) => setRange((r) => ({ ...r, to: e.target.value }))}
-              className="focus-ring rounded-md2 border border-border px-3 py-1.5 text-sm"
+              className="focus-ring w-full rounded-md2 border border-border px-3 py-1.5 text-sm"
             />
           </div>
         </div>
