@@ -153,6 +153,27 @@ cd frontend && npm test
 
 > **Nota sobre `npm test` (backend)**: la suite usa `mongodb-memory-server`, que descarga un binario de MongoDB la primera vez que se ejecuta (requiere acceso a internet en ese momento; luego queda en caché local). En el entorno donde se desarrolló esta prueba, el sandbox tenía bloqueado el acceso a `fastdl.mongodb.org`, por lo que no fue posible ejecutar la suite completa de extremo a extremo allí. Toda la lógica de negocio (reglas de solapamiento, capacidad, horario, fechas) y de conversión de zona horaria fue validada manualmente con scripts de Node ejecutados directamente contra las funciones puras (ver `IA.md` para el detalle). En una máquina con internet normal, `npm test` debería ejecutarse sin inconvenientes.
 
+### Alcance de las pruebas automatizadas
+
+**Backend (Jest + Supertest, en `backend/tests/`)**
+
+| Archivo | Qué cubre |
+|---|---|
+| `auth.test.js` | Login con credenciales válidas/inválidas, acceso a ruta protegida con y sin token, token inválido, ciclo completo de refresh token (emisión, rotación, reutilización rechazada), logout revocando la sesión, y autorización por rol (admin vs. operador) al crear espacios. |
+| `reservations.test.js` | Las 4 reglas de negocio mínimas exigidas por la prueba: **(1)** rechazo de una reserva superpuesta (409 Conflict), **(2)** aceptación de dos reservas consecutivas (una inicia justo cuando termina la otra), **(3)** validación de capacidad y de horario del espacio, **(4)** validación de fecha de inicio anterior a la de fin y de fechas pasadas. Incluye además un caso de edición que confirma que la reserva no se compara contra sí misma al revalidar el solapamiento. |
+| `dateUtils.unit.test.js` | Conversión de fechas entre hora de Bogotá (UTC-5) y UTC, incluyendo un caso "ida y vuelta" para confirmar que la conversión no pierde información. |
+
+**Frontend (Vitest + React Testing Library, en `frontend/src/`)**
+
+| Archivo | Qué cubre |
+|---|---|
+| `components/StatusBadge.test.jsx` | Que cada estado de reserva (pendiente/confirmado/cancelado/completado) muestre la etiqueta correcta, y que un estado desconocido no rompa el componente. |
+| `components/ConfirmDialog.test.jsx` | Accesibilidad del modal: no renderiza si `open` es falso, se expone como `dialog` correctamente etiquetado, el foco se mueve automáticamente al botón "Cancelar" al abrirse (para que la acción no destructiva sea la predeterminada), `Escape` cierra el diálogo, y los botones quedan deshabilitados mientras `loading` es verdadero. |
+| `components/Pagination.test.jsx` | Los botones "Anterior"/"Siguiente" se deshabilitan correctamente en los extremos, disparan `onChange` con la página correcta, y el mensaje "Sin resultados" aparece cuando el total es cero. |
+| `context/AuthContext.test.jsx` | Que la sesión se restaure al montar la app si el refresh token (cookie) sigue siendo válido, que el estado pase a `guest` si no lo es, y que login/logout actualicen el estado global de autenticación correctamente. |
+
+Estas pruebas se concentraron en la lógica de negocio y en los componentes con estado más propensos a errores silenciosos (fechas, solapamientos de horario, permisos, accesibilidad de modales); no incluyen pruebas end-to-end de la interfaz completa (por ejemplo, con Playwright o Cypress simulando un flujo de usuario de principio a fin), lo cual queda documentado como mejora futura más abajo.
+
 ## Endpoints / documentación de API
 
 Hay dos formas de explorar la API:
