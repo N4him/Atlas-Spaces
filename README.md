@@ -36,6 +36,22 @@ atlas-spaces/
 └── README.md (este archivo)
 ```
 
+## 🎥 Video demo
+
+Para facilitar la evaluación del proyecto, se incluye un video donde se muestra el funcionamiento de la aplicación y se recorren las funcionalidades principales.
+
+**Video de demostración:**
+https://drive.google.com/file/d/1RdrLzfjs418-BcwTllXzyUHnuJVedvGh/view?usp=sharing
+En el video se muestra:
+
+- Inicio de sesión.
+- Gestión de espacios.
+- Gestión de reservas.
+- Validaciones de negocio.
+- Dashboard y funcionalidades principales.
+- Exportación de reservas a CSV.
+- Arquitectura, decisiones tomadas y uso de IA.
+
 ## Requisitos previos
 
 - Para ejecución con Docker: **Docker** y **Docker Compose**.
