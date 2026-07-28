@@ -23,6 +23,7 @@ atlas-spaces/
 │   │   └── seed/              # Script de datos iniciales
 │   └── tests/                # Pruebas Jest + Supertest
 ├── frontend/           # SPA (React + Vite + Tailwind)
+│   ├── screenshots/       # Capturas de pantalla (ver sección más abajo)
 │   └── src/
 │       ├── api/               # Cliente Axios y llamadas a la API
 │       ├── context/           # AuthContext (sesión + refresh automático)
@@ -52,6 +53,34 @@ En el video se muestra:
 - Exportación de reservas a CSV.
 - Arquitectura, decisiones tomadas y uso de IA.
 
+## 📸 Capturas de pantalla
+
+Vista de escritorio y vista responsive (móvil) de cada pantalla principal.
+
+### Login
+
+| Escritorio | Móvil |
+|---|---|
+| ![Login - escritorio](frontend/screenshots/login.png) | ![Login - móvil](frontend/screenshots/login_responsive.png) |
+
+### Dashboard
+
+| Escritorio | Móvil |
+|---|---|
+| ![Dashboard - escritorio](frontend/screenshots/dashboard.png) | ![Dashboard - móvil](frontend/screenshots/dashboard_responsive.png) |
+
+### Espacios
+
+| Escritorio | Móvil |
+|---|---|
+| ![Espacios - escritorio](frontend/screenshots/espacios.png) | ![Espacios - móvil](frontend/screenshots/espacios_responsive.png) |
+
+### Reservas
+
+| Escritorio | Móvil |
+|---|---|
+| ![Reservas - escritorio](frontend/screenshots/reservas.png) | ![Reservas - móvil](frontend/screenshots/reservas_responsive.png) |
+
 ## Requisitos previos
 
 - Para ejecución con Docker: **Docker** y **Docker Compose**.
@@ -63,6 +92,8 @@ En el video se muestra:
 # Desde la raíz del proyecto
 docker compose up --build
 ```
+
+> ✅ **Verificado**: `docker compose up --build` se ejecutó de extremo a extremo (los 3 contenedores — frontend, backend y MongoDB — levantan correctamente) usando Docker Desktop.
 
 Esto levanta 3 contenedores:
 
@@ -151,7 +182,11 @@ cd backend && npm test
 cd frontend && npm test
 ```
 
-> **Nota sobre `npm test` (backend)**: la suite usa `mongodb-memory-server`, que descarga un binario de MongoDB la primera vez que se ejecuta (requiere acceso a internet en ese momento; luego queda en caché local). En el entorno donde se desarrolló esta prueba, el sandbox tenía bloqueado el acceso a `fastdl.mongodb.org`, por lo que no fue posible ejecutar la suite completa de extremo a extremo allí. Toda la lógica de negocio (reglas de solapamiento, capacidad, horario, fechas) y de conversión de zona horaria fue validada manualmente con scripts de Node ejecutados directamente contra las funciones puras (ver `IA.md` para el detalle). En una máquina con internet normal, `npm test` debería ejecutarse sin inconvenientes.
+> ✅ **Verificado**: ambas suites se ejecutaron de extremo a extremo, con MongoDB real (`mongodb-memory-server` descarga y levanta un motor de MongoDB genuino, temporal y aislado, no una simulación). Resultado:
+> - **Backend**: 3 suites, **24/24 pruebas pasando** (`auth.test.js`, `reservations.test.js`, `dateUtils.unit.test.js`).
+> - **Frontend**: 4 archivos, **19/19 pruebas pasando** (`StatusBadge`, `Pagination`, `ConfirmDialog`, `AuthContext`).
+>
+> Nota: la primera ejecución de `npm test` en el backend puede tardar un poco más de lo normal, porque `mongodb-memory-server` descarga el binario de MongoDB la primera vez (requiere acceso a internet en ese momento; luego queda en caché local). No requiere tener el backend ni el frontend corriendo en otra terminal — cada suite levanta su propia app/base de datos en memoria de forma autónoma.
 
 ### Alcance de las pruebas automatizadas
 
@@ -226,7 +261,6 @@ Valores válidos de `status`: `pending`, `confirmed`, `cancelled`, `completed`.
 ## Limitaciones conocidas y mejoras que se implementarían con más tiempo
 
 - **Pruebas de frontend**: existen pruebas con Vitest para componentes puntuales (`Pagination`, `StatusBadge`, `ConfirmDialog`) y para `AuthContext`, pero no cubren flujos completos de página (por ejemplo, crear una reserva de principio a fin simulando la interacción del usuario). Sería la siguiente prioridad de testing.
-- **CI**: no se configuró integración continua (GitHub Actions) por alcance, aunque el proyecto está estructurado para agregarla fácilmente (`npm test` en backend y frontend ya son comandos únicos).
+- **CI**: no se configuró integración continua (GitHub Actions) por alcance, aunque el proyecto está estructurado para agregarla fácilmente (`npm test` en backend y frontend ya son comandos únicos, y ambos se verificaron pasando de extremo a extremo).
 - **Accesibilidad**: se implementó manejo de foco, cierre con Escape y roles ARIA en los modales (`useModalA11y`), además de labels y contraste cuidados en los formularios, pero no se hizo una auditoría completa con lector de pantalla ni navegación por teclado exhaustiva de punta a punta.
 - **Refactor de `ReservationsPage`**: es el componente más grande del frontend (filtros, tabla, paginación, modal y exportación en un solo archivo). Con más tiempo se dividiría en subcomponentes más pequeños para facilitar su prueba y lectura.
-- **Verificación de ejecución con Docker de extremo a extremo**: el `docker-compose.yml` fue validado sintácticamente (YAML válido) y cada Dockerfile sigue prácticas estándar (multi-stage para el frontend, healthchecks, volumen persistente para Mongo), pero no se pudo ejecutar `docker compose up --build` de extremo a extremo en el entorno de desarrollo usado, ya que no tenía Docker disponible. Se recomienda validarlo al recibir el proyecto; si surge algún ajuste menor de compatibilidad, es la primera línea de revisión sugerida.
