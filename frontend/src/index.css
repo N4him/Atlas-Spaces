@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-surface text-ink font-body antialiased;
+}
+
+/* Franja horaria decorativa (elemento firma): usada como divisor en login y encabezados clave */
+.hour-ruler {
+  position: relative;
+  height: 10px;
+}
+.hour-ruler::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    to right,
+    theme('colors.brand.500') 0,
+    theme('colors.brand.500') 1px,
+    transparent 1px,
+    transparent 24px
+  );
+  opacity: 0.5;
+}
+
+.focus-ring {
+  @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-surface;
+}
