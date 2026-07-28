@@ -83,7 +83,7 @@ export default function SpacesPage() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-ink">Espacios</h1>
           <p className="text-sm text-ink-soft">Salas, oficinas y auditorios disponibles para reserva.</p>
@@ -122,7 +122,8 @@ export default function SpacesPage() {
 
       {loadState === 'ready' && spaces.length > 0 && (
         <div className="overflow-hidden rounded-md2 border border-border bg-white shadow-card">
-          <table className="w-full text-left text-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[720px] text-left text-sm">
             <thead className="bg-surface-sunken text-xs uppercase tracking-wide text-ink-soft">
               <tr>
                 <th className="px-4 py-3 font-medium">Nombre</th>
@@ -176,7 +177,8 @@ export default function SpacesPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
+            </table>
+          </div>
         </div>
       )}
 

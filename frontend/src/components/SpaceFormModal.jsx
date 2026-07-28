@@ -93,7 +93,7 @@ export default function SpaceFormModal({ open, initialData, onSubmit, onClose, s
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="space-type" className="mb-1 block text-sm font-medium text-ink">
                 Tipo
@@ -139,7 +139,7 @@ export default function SpaceFormModal({ open, initialData, onSubmit, onClose, s
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
               <label htmlFor="space-open-time" className="mb-1 block text-sm font-medium text-ink">
                 Hora de apertura

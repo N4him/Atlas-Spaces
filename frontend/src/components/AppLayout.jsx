@@ -1,5 +1,5 @@
-import React from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
 const NAV_ITEMS = [
@@ -10,9 +10,17 @@ const NAV_ITEMS = [
 
 export default function AppLayout() {
   const { user, logout } = useAuth();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Cierra el drawer automáticamente al navegar a otra pantalla en móvil —
+  // sin esto, después de tocar "Reservas" el menú seguiría tapando la pantalla.
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen">
+    <div className="min-h-screen lg:flex">
       <a
         href="#main-content"
         className="focus-ring sr-only rounded-md2 bg-brand-500 px-4 py-2 text-sm font-medium text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50"
@@ -20,10 +28,51 @@ export default function AppLayout() {
         Saltar al contenido principal
       </a>
 
-      <aside className="flex w-60 shrink-0 flex-col border-r border-border bg-white">
-        <div className="px-5 py-6">
-          <p className="font-display text-lg font-bold tracking-tight text-ink">Atlas Spaces</p>
-          <p className="text-xs text-ink-soft">Panel operativo · Coworking</p>
+      {/* Barra superior — solo visible en móvil/tablet, con el botón de menú */}
+      <header className="flex items-center justify-between border-b border-border bg-white px-4 py-3 lg:hidden">
+        <p className="font-display text-base font-bold tracking-tight text-ink">Atlas Spaces</p>
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="focus-ring rounded-md2 border border-border p-2 text-ink"
+          aria-label="Abrir menú de navegación"
+          aria-expanded={sidebarOpen}
+          aria-controls="app-sidebar"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+          </svg>
+        </button>
+      </header>
+
+      {/* Overlay oscuro detrás del drawer en móvil — al tocarlo, se cierra el menú */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 z-30 bg-ink/40 lg:hidden"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        id="app-sidebar"
+        className={`fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 -translate-x-full flex-col border-r border-border bg-white transition-transform duration-200 ease-out lg:static lg:z-auto lg:w-60 lg:translate-x-0 ${
+          sidebarOpen ? 'translate-x-0' : ''
+        }`}
+      >
+        <div className="flex items-center justify-between px-5 py-6 lg:block">
+          <div>
+            <p className="font-display text-lg font-bold tracking-tight text-ink">Atlas Spaces</p>
+            <p className="text-xs text-ink-soft">Panel operativo · Coworking</p>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(false)}
+            className="focus-ring rounded-md2 p-1 text-ink-soft lg:hidden"
+            aria-label="Cerrar menú de navegación"
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+              <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+            </svg>
+          </button>
         </div>
         <div className="hour-ruler mx-5" aria-hidden="true" />
 
@@ -62,7 +111,7 @@ export default function AppLayout() {
       </aside>
 
       <main id="main-content" className="flex-1 bg-surface">
-        <div className="mx-auto max-w-6xl px-8 py-8">
+        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
           <Outlet />
         </div>
       </main>
